@@ -1,93 +1,69 @@
-// KOI DEBUG GARNA SAKHXAU VANE TYO WHILE LOOP BATA EXIT HUDAINA HAI, SEGMENTATION ERROR VANXA MA CHAI KAM GARDINA YESMA AABA
 #include <stdio.h>
-struct connect{
-    int weight;
-    int to;
-};
-struct node{
-    int level;
-    struct connect connections[4];
-};
-int minIndex(int set[10],struct node nodes[6]);
-int notMinusOne(int set[10]);
-int firstNotMinusOne(int notS[10]);
-int main(){
-    struct node nodes[6];
-    for(int i =0;i< 6;i++){
-        int done = 1;
-        nodes[i].level = 999;
-        for(int j = 0;j< 4;j++){
-            // printf("Are you done for the %d node?",i+1);
-            // scanf("%d",&done);
-            // if(done == 1){
-            //     break;
-            // }
-            printf("Enter weight for %dth %d: ",i+1,j+1);
-            scanf("%d",&nodes[i].connections[j].weight);
-            printf("Enter to %dth %d: ",i+1,j+1);
-            scanf("%d",&nodes[i].connections[j].to);
-        }
-    }
-    
-    int s[10] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-    int sIndex = 0;
-    int notS[10] = {0,1,2,3,4,5,-1,-1,-1,-1};
-    nodes[0].level = 0;
-    while(notMinusOne(s) <= 6 && notMinusOne(notS) != 0 && firstNotMinusOne(notS) != -1){
-        int u = minIndex(notS,nodes);
-        printf("%d\n",u);
-        s[sIndex] = u;
-        sIndex++;
-        for(int i =0;i<10;i++){
-            if(notS[i] == u){
-                notS[i] = -1;
-                break;
-            }
-        }
-        
-        for(int i =0;i<5;i++){
-            if(nodes[u].connections[i].weight != -1 && nodes[nodes[u].connections[i].to].level != -1){
-                int compare = nodes[u].level + nodes[u].connections[i].weight;
-                if(compare < nodes[nodes[u].connections[i].to].level){
-                    nodes[nodes[u].connections[i].to].level = compare;
-                }
-            }
-        }
-    }
-    for(int i = 0;i<10;i++){
-        printf("%d  ",s[i]);
-    }
+void dijkstra(int nodes[6][6],int start);
+int minLevel(int nodes[6][6], int arr[6]);
+int length(int arr[6]);
+void printArray(int arr[6]);
+int firstNonNegativeElement(int arr[6]);
+// Yo comment chai 69 ooe line banauna matra ho hai. 
+int main() {
+    //  if element has same index as row and colum it is it's level
+    int nodes[6][6] = {
+        {9999,3,0,2,0,0},
+        {3,9999,6,2,1,0},
+        {0,6,9999,0,0,1},
+        {2,2,0,9999,3,0},
+        {0,1,0,3,9999,4},
+        {0,0,1,0,4,9999},
+    };
+    dijkstra(nodes,0);
     return 0;
 }
-int minIndex(int notS[10], struct node nodes[6]){
-    int min = notS[firstNotMinusOne(notS)];
-    for(int i = 0;i<10;i++){
-        if(notS[i] != -1){
-            if(nodes[notS[i]].level != -1){
-                if(nodes[notS[i]].level < nodes[min].level){
-                    min = notS[i];
-                }
+void dijkstra(int nodes[6][6],int start){
+    nodes[start][start] = 0;
+    int s[6] = {};
+    int sIndex = 0;
+    int notS[6] = {0,1,2,3,4,5};
+    while(length(notS) != 0 && minLevel(nodes,notS) != -1){
+        int u = minLevel(nodes,notS);
+        s[sIndex] = u;
+        notS[u] = -1;
+        // Calculate v
+        int v[6];
+        int vIndex = 0;
+        for(int i = 0;i< 6;i++){
+            if(i==u) v[vIndex] = -1;
+            if(nodes[u][i] != 0) v[vIndex] = i; else v[vIndex] = -1;
+            vIndex++;
+        }
+        for(int i = 0;i< 6;i++){
+            if(v[i] == -1) continue;
+            int compare = nodes[u][u] + nodes[u][v[i]];
+            if(compare < nodes[v[i]][v[i]]){ 
+                nodes[v[i]][v[i]] = compare;
             }
         }
+        sIndex++;
     }
+    // Thorai code change garera harek path dekhauna nih milxa tara malai nindra lagi sakyo ma chai sute. ani MST wala nih gara hai. ko ko herxau, hereu ani yo msg padeu vane malai msg gara hai. Voli sir lai 3 no ra 9 no aayena, bujaidinu wa gardinu vana hai.
+    printArray(s);
+}
+int length(int arr[6]){
+    int len = 0;
+    for(int i = 0;i< 6;i++) if(arr[i] != -1) len++;
+    return len;
+}
+int minLevel(int nodes[6][6],int notS[6]){
+    int min = firstNonNegativeElement(notS);
+    for(int i = 1;i< 6;i++){
+        if(notS[i] != -1) if(nodes[notS[i]][notS[i]] < nodes[min][min]) min = i;
+    }
+    if(min == 0) if(notS[min] == -1) return -1;
     return min;
 }
-
-int firstNotMinusOne(int notS[10]){
-    for(int i = 0;i< 10;i++){
-        if(notS[i] != -1){
-            return i;
-        }
-    }
-    return -1;
+void printArray(int arr[6]){
+    for(int i = 0;i< 6;i++) printf("%d\t",arr[i]);
+    printf("\n");
 }
-
-int notMinusOne(int set[10]){
-    int o = 0;
-    for(int i = 0;i< 10;i++){
-        if(set[i] != -1){
-            o++;
-        }
-    }
-    return o;
+int firstNonNegativeElement(int arr[6]){
+    for(int i = 0;i< 6;i++) if(arr[i] != -1) return i;
 }
