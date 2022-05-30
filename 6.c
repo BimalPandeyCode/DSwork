@@ -3,6 +3,7 @@ void join(int a[3][3], int b[3][3]);
 int OR(int a, int b);
 int AND(int a, int b);
 void printM(int a[3][3]);
+void product(int a[3][2],int b[2][3]);
 int main(){
     int a[3][3] = {
         {1,0,1},
